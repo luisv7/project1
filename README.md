@@ -12,7 +12,7 @@ As a user, I would like to search the name of a singer/artist and song title in 
 - Bootstrap
 
 # Screenshots
-Coming Soon
+![wireframe](wireframe.png)
 
 # Getting Started
 
