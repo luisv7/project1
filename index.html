@@ -8,24 +8,29 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Kanit:wght@100;200;300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Viga&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma@0.9.4/css/bulma.min.css">
     <link rel="stylesheet" href="/styles.css">
 </head>
 <body>
     <header>
-        <h1>Show Me The Lyrics</h1>
-        <div class="searchArea">
+        <h1>Lyrics Finder</h1>
+        <section class="searchArea">
             <form>
-                <input type="text" class="textBox" id="artist" placeholder="enter name of the artist">
-                <input type="text" class="textBox" id="song" placeholder="enter name of the song">
-                <button type="submit" class="btn btn-secondary" id="searchBtn">Search</button>
+                <input type="text" class="input is-normal" id="artist" placeholder="Name of Artist" required />
+                <input type="text" class="input is-normal" id="song" placeholder="Name of Song" required />
+                <button type="submit" class="button is-dark">Search</button>
             </form>
-        </div>
+        </section>
     </header>
-    <main>
-        <div class="container"></div>
-        <div class="container" id="lyrics"></div>
+    <main class="columns">
+        <section class="container-profile column is-6-tablet"></section>
+        <section class="container-lyrics column is-6-tablet" id="lyrics"></section>
     </main>
-    <footer></footer>
+    <footer class="footer">
+        <h4>Lyrics Finder</h4>
+        <p>&copy; 2022 Luis Villarreal</p>
+    </footer>
     <script src="/script.js"></script>
 
 </body>

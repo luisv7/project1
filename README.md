@@ -1,4 +1,4 @@
-# Show Me The Lyrics
+# Lyrics Finder
 
 - Description: A simple browser app where you can search for the lyrics of a song.
 

@@ -3,38 +3,226 @@
     padding: 0;
     box-sizing: border-box;
 }
-header{
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-top: 15px;
-    gap: 7px;
-}
-.searchArea{
-    align-items: center;
-    gap: 3px;
-}
-#searchBtn{
-    vertical-align: 0;
-    margin-left: 7px;
-}
+
 body{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
     font-family: 'Kanit', sans-serif;
     font-size: 10px;
+    height: 100vh;
 }
 h1{
-    font-family: 'Courgette', cursive;
+    font-family: 'Viga', sans-serif;
     text-align: center;
+    font-size: 2.3em;
+    font-weight: 700;
 }
 h2{
-    font-size: 2em;
+    font-size: 2.2em;
+    font-weight: 700;
 }
 h3{
-    font-size: 1.5em;
+    font-size: 1.6em;
     font-weight: 300;
 }
 h4{
+    font-size: 1.4em;
+    font-weight: 700;
+}
+
+
+/* Header */
+header{
+    display: flex;
+    justify-content: center;
+    flex-direction: column;
+    background-color: lightgray;
+    height: auto;
+    padding: 10px 10px 20px 10px;
+    gap: 7px;
+}
+.searchArea{
+    display: flex;
+    justify-content: center;
+}
+form{
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    width: 610px;
+    gap: 10px;
+}
+.input{
+    width: 300px;
+}
+form button {
+    width: 300px;
+}
+
+
+
+/* Main Section 1 & 2 */
+
+.columns {
+    margin: 0;
+}
+main{
+    display: flex;
+    flex-wrap: wrap;
+    padding: 15px;
+}
+main > .column{
+    display: flex;
+    justify-content: flex-start;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+    padding: 5px;
+    height: auto;
+}
+
+/*  Main | Section 1 container-profile  */
+
+.profile{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+.profile > img{
+    width: 120px;
+    border-radius: 50%;
+}
+.profile > * {
+    padding: 5px;
+}
+
+/* Main | Section 1 container-profile | song-list*/
+
+.song-list{
+    display: flex;
+    flex-wrap: wrap;
+    gap: 7px;
+    width: 100%;
+    background-color: #f5f5f5;
+    padding: 15px;
+    border-radius: 5px;
+    justify-content: space-around;
+}
+.song-list > ul{
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    width: 100%;
+    max-width: 280px;
+    /* max-width: 290px; */
+    height: 100px;
+    list-style-type: none;
+    padding: 5px;
+    border-radius: 5px;
+    box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
+    background-color: white;
+}
+.song-list ul img{
+    width: 80px;
+    height: 80px;
+    object-fit: cover;
+    border-radius: 50%;
+}
+.song-list ul div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    max-height: 80px;
+    line-height: 1.5em;
+    padding-left: 5px; 
+}
+.song-list p {
     font-size: 1.2em;
+}
+
+/* Main | Section 2 container-lyrics */
+
+pre{
+    font-size: 1.2em;
+    text-align: center;
+    width: 100%;
+    border-radius: 5px;
+    height: 700px;
+
+}
+
+/* Footer */
+
+.footer{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    padding: 20px;
+    font-family: 'Viga', sans-serif;
+    background-color: lightgray;
+    font-size: 1.3em;
+} 
+
+
+
+
+
+
+/* 
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+body{
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    font-family: 'Kanit', sans-serif;
+    font-size: 10px;
+    height: 100vh;
+}
+header{
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    gap: 7px;
+    background-color: lightgray;
+    height: auto;
+    padding: 15px 0 15px;
+}
+form{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 10px;
+}
+.input{
+    width: 200px;
+}
+.button{
+    vertical-align: 0;
+    width: 200px;
+}
+h1{
+    font-family: 'Viga', sans-serif;
+    text-align: center;
+    font-size: 2.3em;
+    font-weight: 600;
+}
+h2{
+    font-size: 2em;
+    font-weight: 600;
+}
+h3{
+    font-size: 1.6em;
+    font-weight: 300;
+}
+h4{
+    font-size: 1.4em;
     font-weight: 700;
 }
 main{
@@ -42,19 +230,22 @@ main{
     justify-content: space-around;
     flex-wrap: wrap;
 }
-.container{
+.columns{
+    margin-top: 0;
+}
+.container-profile, .container-lyrics{
     display: flex;
     flex-direction: column;
-    gap: 7px;
-    margin: 15px;
-    padding: 5px;
-    width: 600px;
+    gap: 10px;
+    padding: 10px;
+    max-width: 97%;
     height: auto;
+    align-items: center;
 }
 .profile{
     display: flex;
     align-items: center;
-    width: 600px;
+    font-size: 1.6em;
 }
 #main-profile-img{
     width: 100px;
@@ -63,13 +254,13 @@ main{
 }
 .song-list{
     display: flex;
-    width: 600px;
     flex-wrap: wrap;
     gap: 7px;
     padding-left: 20px;
-    background-color: rgb(236, 236, 236);
+    background-color: #f5f5f5;
     padding: 10px;
     border-radius: 5px;
+    justify-content: space-around;
 }
 .song-list ul{
     display: flex;
@@ -90,35 +281,41 @@ main{
     border-radius: 50%;
 }
 .song-list ul div {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
     max-height: 80px;
     line-height: 1.5em;
-    padding-left: 5px;
+    padding-left: 5px; 
 }
-pre{
-    overflow: auto;
-    height: 500px;
-    padding: 15px;
-    box-shadow: 2px 2px 4px 1px rgba(0, 0, 0, 0.2);
+.song-list p {
+    font-size: 1.2em;
 }
-.textBox{
-    font-size: 1.4em;
-    padding: 5px;
-    border: 2px solid black;
-    border-radius: 3px;
-}
-#artist, #song{
-    width: 220px;
-}
-
-
-#lyrics{
+.container-lyrics{
     font-size: 1.4em;
     font-weight: 500;
-    padding: 15px;
 }
-
+pre{
+    font-size: 1.1em;
+    max-height: 700px;
+    width: 100%;
+    max-width: 600px;
+    padding: 15px;
+    text-align: center;
+    box-shadow: 2px 2px 4px 1px rgba(0, 0, 0, 0.2);
+}
 #errorMsg{
     white-space: pre;
-    font-size: 1.4em;
-    font-weight: 700;
+    font-size: 1.8em;
+    font-weight: 600;
 }
+.footer{
+    display: flex;
+    justify-content: left;
+    justify-items: center;
+    gap: 15px;
+    padding: 20px;
+    font-family: 'Viga', sans-serif;
+    background-color: lightgray;
+    font-size: 1.3em;
+} */
