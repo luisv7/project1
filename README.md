@@ -19,6 +19,8 @@ As a user, I would like to search the name of a singer/artist and song title in 
 Click [here](#) to search for some lyrics of your favorite artists.
 
 # Future Enhancements
-- Display a video of the song.
+- add loading text while it's fetching the data.
 - As a user, I should see some information about the song and artist.
 - As a user, I should see more songs about the same singer/artist that was searched.
+- click on a new suggeste song and replace the lyrics if available.
+- Display a video of the song.

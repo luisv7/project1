@@ -1,13 +1,21 @@
 
+const main = document.querySelector("main");
 const textInputArtist = document.querySelector("#artist");
 const textInputSong = document.querySelector("#song");
 const form = document.querySelector("form");
+const profileDiv = document.querySelector(".container-profile");
+const lyricsContainer = document.querySelector(".container-lyrics");
 
 form.addEventListener("submit", (event) => {
     event.preventDefault();
 
+    // Grab input and set text to lowercase.
     let artistName = event.target[0].value.toLowerCase();
     let songName = event.target[1].value.toLowerCase();
+
+    // Remove any white spaces before or after string.
+    artistName = artistName.trim();
+    songName = songName.trim();
 
     let URL1 = `https://genius.p.rapidapi.com/search?q=${artistName}`;
     let URL2 = 'https://api.lyrics.ovh/v1/' + artistName + '/' + songName;
@@ -17,25 +25,60 @@ form.addEventListener("submit", (event) => {
         method: 'GET',
         headers: {
             'X-RapidAPI-Key': '5603513f1emsh43c3e7113066ec3p176351jsn568118181670',
-            'X-RapidAPI-Host': 'genius.p.rapidapi.com'
-        }
+            'X-RapidAPI-Host': 'genius.p.rapidapi.com',
+            'mode': 'no-cors'
+        },
     };
+
+    function clearData(){
+        // if data excists clear the data.
+        while (profileDiv.firstChild){
+            profileDiv.removeChild(profileDiv.firstChild);
+        }
+        while(lyricsContainer.firstChild){
+            lyricsContainer.removeChild(lyricsContainer.firstChild);
+        }
+    }
+
+    function errorData(){
+        const errorLyricsContainer = document.querySelector(".container-lyrics");
+        const errorLyricsTitle = document.createElement("h2");
+        const errorLyricsPreEl = document.createElement("pre");
+
+        let errorMsg = `Oh No! We couldn't find\r\n ${songName.toUpperCase()} by ${artistName.toUpperCase()}\r\nPlease check your spelling or try some popular results.`;
+        errorLyricsTitle.textContent = "LYRICS NOT FOUND";
+        errorLyricsPreEl.textContent = errorMsg;
+        errorLyricsContainer.appendChild(errorLyricsTitle);
+        errorLyricsContainer.appendChild(errorLyricsPreEl);
+    }
+
+    // Loading Text
+    const loadingText = document.createElement("h2");
+    loadingText.setAttribute("class","column is-12");
+    loadingText.textContent = " loading...";
+    main.insertBefore(loadingText, main.firstChild)
+    console.dir(profileDiv);
 
     Promise.all([
         fetch(URL1, options), fetch(URL2),])
         .then((responses) => Promise.all(responses.map((response) => response.json())))
         .then((data) => {
-            console.log(data);
-        // You would do something with both sets of data here
+        
+        // console.log(data[0]);
+        // console.log(data[1]);
+        
+        // if main container data excists clear the data.
+        loadingText.remove();
+        clearData();
+
+        // 2 sets of API's main objects.
         const artist = data[0].response.hits;
         const songLyrics = data[1].lyrics; 
     
+        // New array containting only the songs from the main artist. No ft. songs.
         const filteredArr = artist.filter((element)=> {
             return element.result.primary_artist.name.toLowerCase() == artistName
         });
-    
-        // Profile
-        const profileDiv = document.querySelector(".container-profile");
     
         // Artist Photo and Name
         // const main = document.querySelector("main");
@@ -96,29 +139,25 @@ form.addEventListener("submit", (event) => {
         });
     
         // Lyrics
-        const lyricsContainer = document.querySelector(".container-lyrics");
         const lyricsTitle = document.createElement("h2");
         const lyricsPreEl = document.createElement("pre");
-    
+
         lyricsTitle.textContent = `${songName.toUpperCase()} BY ${artistName.toUpperCase()}`
         lyricsPreEl.textContent = songLyrics;
-    
         lyricsContainer.appendChild(lyricsTitle);
         lyricsContainer.appendChild(lyricsPreEl);
-    
-        console.log(filteredArr);
-        console.log(artist);
-        console.log(data[1]);
+
+        if (data[1].error){
+            clearData();
+            errorData();
+        }
     
         })
         .catch((error) => {
             // if there's an error, log it
-            const main = document.querySelector("main");
-            const pErrorMsg = document.createElement("p");
-            pErrorMsg.setAttribute("id", "errorMsg");
-            pErrorMsg.textContent = "Oh No! We couldn't find a match\r\nAlso, Please check your spelling";
-            main.appendChild(pErrorMsg);
-            console.log(error);
+            console.log(error)
+            clearData();
+            errorData();
         });
         
         // Clear Form
