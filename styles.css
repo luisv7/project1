@@ -61,7 +61,6 @@ form button {
 }
 
 
-
 /* Main Section 1 & 2 */
 
 .columns {
@@ -102,7 +101,7 @@ main > .column{
 .song-list{
     display: flex;
     flex-wrap: wrap;
-    gap: 7px;
+    gap: 10px;
     width: 100%;
     background-color: #f5f5f5;
     padding: 15px;
@@ -112,9 +111,9 @@ main > .column{
 .song-list > ul{
     display: flex;
     align-items: center;
-    gap: 5px;
-    min-width: 280px;
-    max-height: 120px;
+    gap: 12px;
+    width: 350px;
+    height: 150px;
     list-style-type: none;
     padding: 5px;
     border-radius: 5px;
@@ -126,17 +125,22 @@ main > .column{
     height: 80px;
     object-fit: cover;
     border-radius: 50%;
+    margin-left: 10px;
 }
 .song-list ul div {
     display: flex;
     flex-direction: column;
-    gap: 3px;
+    gap: 5px;
     max-height: 80px;
     line-height: 1.5em;
     padding-left: 5px; 
 }
 .song-list p {
     font-size: 1.2em;
+}
+.song-list button{
+    width: 100px;
+    font-weight: 500;
 }
 
 /* Main | Section 2 container-lyrics */
@@ -146,7 +150,9 @@ pre{
     text-align: center;
     width: 100%;
     border-radius: 5px;
-    height: 700px;
+    min-height: 700px;
+    max-height: 950px;
+    height: 100%;
 
 }
 

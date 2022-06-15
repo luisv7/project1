@@ -6,6 +6,19 @@ const form = document.querySelector("form");
 const profileDiv = document.querySelector(".container-profile");
 const lyricsContainer = document.querySelector(".container-lyrics");
 
+function errorData(artistName, songName){
+    const errorLyricsContainer = document.querySelector(".container-lyrics");
+    const errorLyricsTitle = document.createElement("h2");
+    const errorLyricsPreEl = document.createElement("pre");
+
+    let errorMsg = `Oh No! We couldn't find\r\n ${songName.toUpperCase()} by ${artistName.toUpperCase()}\r\nPlease check your spelling or try some popular results.`;
+    errorLyricsTitle.textContent = "LYRICS NOT FOUND";
+    errorLyricsPreEl.textContent = errorMsg;
+    errorLyricsContainer.appendChild(errorLyricsTitle);
+    errorLyricsContainer.appendChild(errorLyricsPreEl);
+}
+
+
 form.addEventListener("submit", (event) => {
     event.preventDefault();
 
@@ -38,18 +51,6 @@ form.addEventListener("submit", (event) => {
         while(lyricsContainer.firstChild){
             lyricsContainer.removeChild(lyricsContainer.firstChild);
         }
-    }
-
-    function errorData(){
-        const errorLyricsContainer = document.querySelector(".container-lyrics");
-        const errorLyricsTitle = document.createElement("h2");
-        const errorLyricsPreEl = document.createElement("pre");
-
-        let errorMsg = `Oh No! We couldn't find\r\n ${songName.toUpperCase()} by ${artistName.toUpperCase()}\r\nPlease check your spelling or try some popular results.`;
-        errorLyricsTitle.textContent = "LYRICS NOT FOUND";
-        errorLyricsPreEl.textContent = errorMsg;
-        errorLyricsContainer.appendChild(errorLyricsTitle);
-        errorLyricsContainer.appendChild(errorLyricsPreEl);
     }
 
     // Loading Text
@@ -115,27 +116,32 @@ form.addEventListener("submit", (event) => {
             // Create Elements
             const ul = document.createElement("ul");
             const img = document.createElement("img");
-            const divText = document.createElement("div");
+            const divInfo = document.createElement("div");
             const h3ArtistName = document.createElement("h3");
             const h4ArtistSongTitle = document.createElement("h4");
             const parDate = document.createElement("p");
+            const btnSeeLyrics = document.createElement("button");
     
             // Set Attributes
             img.setAttribute("src", textInpArtist.song_art_image_url);
-    
+            btnSeeLyrics.setAttribute("class", "button is-dark is-small");
+            btnSeeLyrics.setAttribute("data-song",textInpArtist.title);
+            btnSeeLyrics.setAttribute("data-artist",textInpArtist.primary_artist.name);
+
+
             h3ArtistName.textContent = textInpArtist.artist_names;
             h4ArtistSongTitle.textContent = textInpArtist.title;
             parDate.textContent = textInpArtist.release_date_for_display;
+            btnSeeLyrics.textContent = "See Lyrics";
     
             // Append
             ul.appendChild(img);
-            ul.appendChild(divText);
-            divText.appendChild(h3ArtistName);
-            divText.appendChild(h4ArtistSongTitle);
-            divText.appendChild(parDate);
+            ul.appendChild(divInfo);
+            divInfo.appendChild(h3ArtistName);
+            divInfo.appendChild(h4ArtistSongTitle);
+            divInfo.appendChild(parDate);
+            divInfo.appendChild(btnSeeLyrics);
             divOtherSongs.appendChild(ul);
-    
-            console.log(textInpArtist);
         });
     
         // Lyrics
@@ -149,7 +155,7 @@ form.addEventListener("submit", (event) => {
 
         if (data[1].error){
             clearData();
-            errorData();
+            errorData(artistName, songName);
         }
     
         })
@@ -157,7 +163,7 @@ form.addEventListener("submit", (event) => {
             // if there's an error, log it
             console.log(error)
             clearData();
-            errorData();
+            errorData(artistName, songName);
         });
         
         // Clear Form
@@ -165,5 +171,40 @@ form.addEventListener("submit", (event) => {
         textInputSong.value = "";
 });
 
+profileDiv.addEventListener("click", (event)=>{
+    event.preventDefault();
 
+    let nameOfSong = event.target.dataset.song.toLowerCase();
+    let nameOfArtist = event.target.dataset.artist.toLowerCase();
 
+    let newUrlLyrics = 'https://api.lyrics.ovh/v1/' + nameOfArtist + '/' + nameOfSong;
+
+    fetch(newUrlLyrics)
+        .then((response) => response.json())
+        .then((data) => {
+
+            // Remove old Lyrics
+            while(lyricsContainer.firstChild){
+                lyricsContainer.removeChild(lyricsContainer.firstChild);
+            }
+
+            // Add new lyrics 
+            const lyricsTitle = document.createElement("h2");
+            const lyricsPreEl = document.createElement("pre");
+    
+            lyricsTitle.textContent = `${nameOfSong.toUpperCase()} BY ${nameOfArtist.toUpperCase()}`
+            lyricsPreEl.textContent = data.lyrics;
+            lyricsContainer.appendChild(lyricsTitle);
+            lyricsContainer.appendChild(lyricsPreEl);
+
+            if (data.error){
+                errorData(nameOfArtist,nameOfSong);
+            }
+        })
+        .catch((error) => {
+            console.log(error);
+            errorData(nameOfArtist, nameOfSong);
+        });
+
+    console.dir(nameOfSong);
+})
