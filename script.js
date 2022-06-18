@@ -1,117 +1,244 @@
 
 const main = document.querySelector("main");
 const textInputArtist = document.querySelector("#artist");
-const textInputSong = document.querySelector("#song");
+// const textInputSong = document.querySelector("#song");
 const form = document.querySelector("form");
-const profileDiv = document.querySelector(".container-profile");
-const lyricsContainer = document.querySelector(".container-lyrics");
+const profileContainer = document.querySelector(".container-profile");
+const songContainer = document.querySelector(".container-list-of-songs");
+
+function clearAllData(){
+    // if data excists clear the data.
+    while (profileContainer.firstChild){
+        profileContainer.removeChild(profileContainer.firstChild);
+    }
+    while(songContainer.firstChild){
+        songContainer.removeChild(songContainer.firstChild);
+    }
+}
+
+function clearLyricsData(container){
+    while(container.firstChild){
+        container.removeChild(songContainer.firstChild);
+    }
+}
+
+function loadingLyrics(){
+    const pre = document.querySelector("#lyrics");
+    pre.setAttribute("class", "loading");
+    pre.textContent = "loading...";
+}
 
 function errorData(artistName, songName){
-    const errorLyricsContainer = document.querySelector(".container-lyrics");
+    const errorsongContainer = document.querySelector(".container-list-of-songs");
     const errorLyricsTitle = document.createElement("h2");
     const errorLyricsPreEl = document.createElement("pre");
 
     let errorMsg = `Oh No! We couldn't find\r\n ${songName.toUpperCase()} by ${artistName.toUpperCase()}\r\nPlease check your spelling or try some popular results.`;
     errorLyricsTitle.textContent = "LYRICS NOT FOUND";
     errorLyricsPreEl.textContent = errorMsg;
-    errorLyricsContainer.appendChild(errorLyricsTitle);
-    errorLyricsContainer.appendChild(errorLyricsPreEl);
+    errorsongContainer.appendChild(errorLyricsTitle);
+    errorsongContainer.appendChild(errorLyricsPreEl);
 }
 
+function getId(artistName){
+    const options2 = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': '5603513f1emsh43c3e7113066ec3p176351jsn568118181670',
+            'X-RapidAPI-Host': 'genius.p.rapidapi.com'
+        }
+    };
 
-form.addEventListener("submit", (event) => {
-    event.preventDefault();
+    let response = fetch(`https://genius.p.rapidapi.com/search?q=${artistName}`, options2)
+    .then(response => response.json())
+    .then(data => {
+        return data.response.hits[0].result.primary_artist.id
+    })
+    .catch(err => console.error(err));
 
-    // Grab input and set text to lowercase.
-    let artistName = event.target[0].value.toLowerCase();
-    let songName = event.target[1].value.toLowerCase();
+    return response
+}
 
-    // Remove any white spaces before or after string.
-    artistName = artistName.trim();
-    songName = songName.trim();
+function getArtistInfo(id){
 
-    let URL1 = `https://genius.p.rapidapi.com/search?q=${artistName}`;
-    let URL2 = 'https://api.lyrics.ovh/v1/' + artistName + '/' + songName;
-    // let url3 = `https://genius.p.rapidapi.com/artists/690350/songs?per_page=50`;
+    let artistProfile = `https://genius.p.rapidapi.com/artists/${id}`;
 
     const options = {
         method: 'GET',
         headers: {
             'X-RapidAPI-Key': '5603513f1emsh43c3e7113066ec3p176351jsn568118181670',
-            'X-RapidAPI-Host': 'genius.p.rapidapi.com',
-            'mode': 'no-cors'
+            'X-RapidAPI-Host': 'genius.p.rapidapi.com'
+        }
+    };
+    
+     return fetch(artistProfile, options)
+        .then(response => response.json())
+        .then(data => {
+
+            // Add nickname to artist profile
+            let otherName = data.response.artist.alternate_names[0];
+            const otherNameH3 = document.createElement("h3");
+            const profileNickname = document.querySelector(".artist-name");
+            otherNameH3.textContent = otherName;
+            if (otherName !== undefined){
+                profileNickname.appendChild(otherNameH3)
+            }
+
+            // Profile Artist Info
+            let artistInfo = data.response.artist.description.dom.children[0].children;
+            const infoPar = document.createElement("p");
+            artistInfo.forEach((element) => {
+                if (typeof element === "string"){
+                    infoPar.textContent += element;
+                }else if(typeof element.children[0] === "object"){
+                    infoPar.textContent += element.children[0].children[0];
+
+                }else{
+                    infoPar.textContent += element.children[0];
+                }
+            });
+            profileContainer.appendChild(infoPar);
+        })
+        .catch(err => console.error(err));
+
+    
+}
+
+function getLyrics(artist, song){
+
+    let URL = `https://api.lyrics.ovh/v1/${artist.toLowerCase()}/${song.toLowerCase()}`;
+
+    // Loading Text
+    loadingLyrics();
+
+    fetch(URL)
+    .then(response => response.json())
+    .then(data => {
+
+        // target tags
+        const h2 = document.querySelector("#lyric-title");
+        const pre = document.querySelector("#lyrics");
+
+        // Song title
+        h2.textContent = `${song.toUpperCase()} BY ${artist.toUpperCase()}`;
+        
+        // lyrics data
+        pre.textContent = data.lyrics;
+
+    })
+    .catch(err => console.error(err));
+}
+
+function getYoutubeVideo(songId){
+    
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': '5603513f1emsh43c3e7113066ec3p176351jsn568118181670',
+            'X-RapidAPI-Host': 'genius.p.rapidapi.com'
+        }
+    };
+    
+    fetch(`https://genius.p.rapidapi.com/songs/${songId}`, options)
+        .then(response => response.json())
+        .then(data => {
+            let media = data.response.song.media;
+
+            media = media.filter((element) => {
+                return element.provider === "youtube";
+            });
+
+            let youtubeLink = media[0].url;
+            let youtubeId = youtubeLink.slice(youtubeLink.search("=") + 1);
+
+            let frame = document.createElement("iframe");
+            frame.setAttribute("src", `https://www.youtube.com/embed/${youtubeId}`);
+            frame.setAttribute("id", "player");
+            
+            profileContainer.appendChild(frame);
+            
+        })
+        .catch(err => console.error(err));
+}
+
+form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+
+    // clear data before displaying new artist
+    clearAllData();
+
+    // Grab input name of artist from form
+    let artistName = event.target[0].value.toLowerCase();
+    artistName = artistName.trim();
+
+    // fetch artist ID 
+    let artistId = await this.getId(artistName);
+
+    // Setting up the URL's
+    let URL1 = `https://genius.p.rapidapi.com/search?q=${artistName}`;
+
+    const options = {
+    method: 'GET',
+    headers: {
+        'X-RapidAPI-Key': '5603513f1emsh43c3e7113066ec3p176351jsn568118181670',
+        'X-RapidAPI-Host': 'genius.p.rapidapi.com',
+        'mode': 'no-cors'
         },
     };
 
-    function clearData(){
-        // if data excists clear the data.
-        while (profileDiv.firstChild){
-            profileDiv.removeChild(profileDiv.firstChild);
-        }
-        while(lyricsContainer.firstChild){
-            lyricsContainer.removeChild(lyricsContainer.firstChild);
-        }
-    }
+    fetch(URL1, options)
+    .then((response) => response.json())
+    .then(async (data) => {
 
-    // Loading Text
-    const loadingText = document.createElement("h2");
-    loadingText.setAttribute("class","column is-12");
-    loadingText.textContent = " loading...";
-    main.insertBefore(loadingText, main.firstChild)
-    console.dir(profileDiv);
-
-    Promise.all([
-        fetch(URL1, options), fetch(URL2),])
-        .then((responses) => Promise.all(responses.map((response) => response.json())))
-        .then((data) => {
+        const artistArrHits = data.response.hits;
         
-        // console.log(data[0]);
-        // console.log(data[1]);
-        
-        // if main container data excists clear the data.
-        loadingText.remove();
-        clearData();
-
-        // 2 sets of API's main objects.
-        const artist = data[0].response.hits;
-        const songLyrics = data[1].lyrics; 
-    
         // New array containting only the songs from the main artist. No ft. songs.
-        const filteredArr = artist.filter((element)=> {
+        const filteredArrHits = artistArrHits.filter((element)=> {
             return element.result.primary_artist.name.toLowerCase() == artistName
         });
-    
+
+        // I knew you where not a lazy coder mike. you're even reading my comments.
+        const primaryArtist = filteredArrHits[0].result.primary_artist;
+        
         // Artist Photo and Name
-        // const main = document.querySelector("main");
-        const divAvatar = document.createElement("div");
+        const profileArtistDiv = document.createElement("div");
         const profileImg = document.createElement("img");
-        const profileName = document.createElement("h2");
+        const profileArtistNamesDiv = document.createElement("div");
+        const profileNameH2 = document.createElement("h2");
     
-        divAvatar.setAttribute("class", "profile");
+        // Set Attributes
+        profileArtistDiv.setAttribute("class", "profile");
+        profileArtistNamesDiv.setAttribute("class", "artist-name");
         profileImg.setAttribute("id", "main-profile-img");
-        profileImg.setAttribute("src", filteredArr[0].result.primary_artist.image_url);
-        profileName.textContent = filteredArr[0].result.primary_artist.name;
+        profileImg.setAttribute("src", primaryArtist.image_url);
+
+        profileNameH2.textContent = primaryArtist.name;
     
-        divAvatar.appendChild(profileImg);
-        divAvatar.appendChild(profileName);
-        profileDiv.appendChild(divAvatar);
-    
+        // Append
+        profileArtistDiv.appendChild(profileImg);
+        profileArtistDiv.appendChild(profileArtistNamesDiv);
+        profileArtistNamesDiv.appendChild(profileNameH2);
+        profileContainer.appendChild(profileArtistDiv);
+
+        // Artist Info
+        await getArtistInfo(artistId);
+
         // Label for Popular Songs and song suggestion list
-        const h2TextOtherSongs = document.createElement("h2");
-        const divOtherSongs = document.createElement("div");
+        const h2PopularSongLabel = document.createElement("h2");
+        const divSongList = document.createElement("div");
     
         // Popular Song Label
-        h2TextOtherSongs.setAttribute("id","popular-songs-label");
-        h2TextOtherSongs.textContent = "Popular Songs";
-        profileDiv.appendChild(h2TextOtherSongs);
+        h2PopularSongLabel.textContent = "Popular Songs";
+        songContainer.appendChild(h2PopularSongLabel);
     
         // Song List Div
-        divOtherSongs.setAttribute("class", "song-list");
-        profileDiv.appendChild(divOtherSongs);
+        divSongList.setAttribute("class", "song-list");
+        songContainer.appendChild(divSongList);
     
         // Create List of popular songs
-        filteredArr.forEach((element)=>{
-            const textInpArtist = element.result;
+        filteredArrHits.forEach((element)=>{
+            const artist = element.result;
     
             // Create Elements
             const ul = document.createElement("ul");
@@ -119,19 +246,20 @@ form.addEventListener("submit", (event) => {
             const divInfo = document.createElement("div");
             const h3ArtistName = document.createElement("h3");
             const h4ArtistSongTitle = document.createElement("h4");
-            const parDate = document.createElement("p");
+            const DateOfSong = document.createElement("p");
             const btnSeeLyrics = document.createElement("button");
     
             // Set Attributes
-            img.setAttribute("src", textInpArtist.song_art_image_url);
+            img.setAttribute("src", artist.song_art_image_url);
             btnSeeLyrics.setAttribute("class", "button is-dark is-small");
-            btnSeeLyrics.setAttribute("data-song",textInpArtist.title);
-            btnSeeLyrics.setAttribute("data-artist",textInpArtist.primary_artist.name);
+            btnSeeLyrics.setAttribute("data-song", artist.title);
+            btnSeeLyrics.setAttribute("data-artist-name", artist.primary_artist.name);
+            btnSeeLyrics.setAttribute("data-song-id", artist.id);
+            divInfo.setAttribute("class", "song-info");
 
-
-            h3ArtistName.textContent = textInpArtist.artist_names;
-            h4ArtistSongTitle.textContent = textInpArtist.title;
-            parDate.textContent = textInpArtist.release_date_for_display;
+            h3ArtistName.textContent = artist.artist_names;
+            h4ArtistSongTitle.textContent = artist.title;
+            DateOfSong.textContent = artist.release_date_for_display;
             btnSeeLyrics.textContent = "See Lyrics";
     
             // Append
@@ -139,72 +267,52 @@ form.addEventListener("submit", (event) => {
             ul.appendChild(divInfo);
             divInfo.appendChild(h3ArtistName);
             divInfo.appendChild(h4ArtistSongTitle);
-            divInfo.appendChild(parDate);
+            divInfo.appendChild(DateOfSong);
             divInfo.appendChild(btnSeeLyrics);
-            divOtherSongs.appendChild(ul);
+            divSongList.appendChild(ul);
         });
-    
+
         // Lyrics
+        const lyricsDiv = document.createElement("div");
         const lyricsTitle = document.createElement("h2");
         const lyricsPreEl = document.createElement("pre");
 
-        lyricsTitle.textContent = `${songName.toUpperCase()} BY ${artistName.toUpperCase()}`
-        lyricsPreEl.textContent = songLyrics;
-        lyricsContainer.appendChild(lyricsTitle);
-        lyricsContainer.appendChild(lyricsPreEl);
+        lyricsDiv.setAttribute("class", "lyrics-container");
+        lyricsTitle.setAttribute("id", "lyric-title");
+        lyricsPreEl.setAttribute("id", "lyrics");
 
-        if (data[1].error){
-            clearData();
-            errorData(artistName, songName);
-        }
-    
-        })
-        .catch((error) => {
-            // if there's an error, log it
-            console.log(error)
-            clearData();
-            errorData(artistName, songName);
-        });
-        
-        // Clear Form
-        textInputArtist.value = "";
-        textInputSong.value = "";
+        let songName = filteredArrHits[0].result.title;
+
+        lyricsTitle.textContent = `${songName.toUpperCase()} BY ${artistName.toUpperCase()}`;
+        lyricsDiv.appendChild(lyricsTitle);
+        lyricsDiv.appendChild(lyricsPreEl);
+        profileContainer.appendChild(lyricsDiv);
+
+        // fetch youtube data
+        getYoutubeVideo(artistArrHits[0].result.id);
+
+        // Fetch first Lyrics
+        getLyrics(artistName, songName);
+
+        console.log(data);
+
+    })
+    .catch((error) => {
+        console.log(error)
+    })
+
 });
 
-profileDiv.addEventListener("click", (event)=>{
+songContainer.addEventListener("click", (event) => {
     event.preventDefault();
 
-    let nameOfSong = event.target.dataset.song.toLowerCase();
-    let nameOfArtist = event.target.dataset.artist.toLowerCase();
+    console.log(event);
 
-    let newUrlLyrics = 'https://api.lyrics.ovh/v1/' + nameOfArtist + '/' + nameOfSong;
+    let artist = event.target.dataset.artistName;
+    let song = event.target.dataset.song;
+    let songId = event.target.dataset.songId;
 
-    fetch(newUrlLyrics)
-        .then((response) => response.json())
-        .then((data) => {
-
-            // Remove old Lyrics
-            while(lyricsContainer.firstChild){
-                lyricsContainer.removeChild(lyricsContainer.firstChild);
-            }
-
-            // Add new lyrics 
-            const lyricsTitle = document.createElement("h2");
-            const lyricsPreEl = document.createElement("pre");
-    
-            lyricsTitle.textContent = `${nameOfSong.toUpperCase()} BY ${nameOfArtist.toUpperCase()}`
-            lyricsPreEl.textContent = data.lyrics;
-            lyricsContainer.appendChild(lyricsTitle);
-            lyricsContainer.appendChild(lyricsPreEl);
-
-            if (data.error){
-                errorData(nameOfArtist,nameOfSong);
-            }
-        })
-        .catch((error) => {
-            console.log(error);
-            errorData(nameOfArtist, nameOfSong);
-        });
-
-    console.dir(nameOfSong);
-})
+    loadingLyrics();
+    getLyrics(artist, song);
+    getYoutubeVideo(songId);
+});
