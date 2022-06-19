@@ -82,7 +82,7 @@ main > .column{
 
 /*  Main | Section 1 container-profile  */
 
-.container-profile p {
+.about-artist {
     font-size: 1.4em;
     font-weight: 500px;
     padding: 15px;
@@ -103,29 +103,29 @@ main > .column{
     padding: 5px;
 }
 #player{
-    height: 315px;
-    width: 100%;
+    height: 360px;
+    width: 640px;
 }
 
 /* Main | Section 1 container-profile | song-list*/
 
 .song-list{
     display: flex;
+    justify-content: space-around;
     flex-wrap: wrap;
     gap: 10px;
     width: 100%;
     background-color: #f5f5f5;
-    padding: 15px;
+    padding: 10px;
     border-radius: 5px;
-    justify-content: space-around;
 }
 .song-list > ul{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
     gap: 8px;
-    width: 450px;
-    height: 150px;
+    width: 100%;
+    height: 90px;
     list-style-type: none;
     padding: 5px;
     border-radius: 5px;
@@ -136,14 +136,13 @@ main > .column{
     width: 80px;
     height: 80px;
     object-fit: cover;
-    border-radius: 50%;
+    border-radius: 3%;
 }
 .song-list ul div {
     display: flex;
     flex-direction: column;
     gap: 5px;
     width: 200px;
-    max-height: 250px;
     line-height: 1.5em;
     padding-left: 5px; 
 }
@@ -151,7 +150,7 @@ main > .column{
     font-size: 1.2em;
 }
 .song-list .button{
-    width: 120px;
+    width: 80px;
     font-weight: 500;
 }
 .song-list .button:hover{
@@ -171,7 +170,7 @@ pre{
     text-align: center;
     width: 100%;
     border-radius: 5px;
-    height: 500px;
+    height: 700px;
 }
 
 /* Footer */
@@ -186,17 +185,3 @@ pre{
     background-color: lightgray;
     font-size: 1.3em;
 } 
-
-/* @media screen and (max-width: 1243px) {
-    .song-list > ul{
-        width: 250px;
-        height: 110px;
-    }
-  }
-
-@media screen and (max-width: 1123px) {
-    .song-list > ul{
-        width: 225px;
-        height: 120px;
-    }
-} */
