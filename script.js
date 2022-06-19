@@ -6,6 +6,7 @@ const form = document.querySelector("form");
 const profileContainer = document.querySelector(".container-profile");
 const songContainer = document.querySelector(".container-list-of-songs");
 
+
 function clearAllData(){
     // if data excists clear the data.
     while (profileContainer.firstChild){
@@ -24,7 +25,6 @@ function clearLyricsData(container){
 
 function loadingLyrics(){
     const pre = document.querySelector("#lyrics");
-    pre.setAttribute("class", "loading");
     pre.textContent = "loading...";
 }
 
@@ -156,7 +156,7 @@ function getYoutubeVideo(songId, insertContainer){
             frame.setAttribute("src", `https://www.youtube.com/embed/${youtubeId}`);
             frame.setAttribute("id", "player");
             
-            insertContainer.insertBefore(frame, document.querySelector("#lyric-title"));
+            insertContainer.insertBefore(frame, document.querySelector("#lyrics-label"));
         })
         .catch(err => console.error(err));
 }
@@ -269,30 +269,34 @@ form.addEventListener("submit", async (event) => {
         });
 
         // Lyrics
+
+        // Create 
         const lyricsDiv = document.createElement("div");
         const lyricsTitle = document.createElement("h2");
-        const lyricsPreEl = document.createElement("pre");
+        const lyricsLabel = document.createElement("h2");
+        const lyricsPre = document.createElement("pre");
 
+        // Set
         lyricsDiv.setAttribute("class", "lyrics-container");
         lyricsTitle.setAttribute("id", "lyric-title");
-        lyricsPreEl.setAttribute("id", "lyrics");
+        lyricsLabel.setAttribute("id", "lyrics-label");
+        lyricsPre.setAttribute("id", "lyrics");
 
         let songName = filteredArrHits[0].result.title;
-
         lyricsTitle.textContent = `${songName.toUpperCase()} BY ${artistName.toUpperCase()}`;
+        lyricsLabel.textContent = "LYRICS";
+
+        // Append
         lyricsDiv.appendChild(lyricsTitle);
-        lyricsDiv.appendChild(lyricsPreEl);
+        lyricsDiv.appendChild(lyricsLabel);
+        lyricsDiv.appendChild(lyricsPre);
         songContainer.appendChild(lyricsDiv);
 
         // Fetch first Lyrics
         getLyrics(artistName, songName);
 
-        console.log(filteredArrHits);
-
         // fetch youtube video
         getYoutubeVideo(filteredArrHits[0].result.id, lyricsDiv);
-
-        console.log(data);
 
     })
     .catch((error) => {
@@ -303,8 +307,6 @@ form.addEventListener("submit", async (event) => {
 
 profileContainer.addEventListener("click", (event) => {
     event.preventDefault();
-
-    console.log(event);
 
     let artist = event.target.dataset.artistName;
     let song = event.target.dataset.song;
@@ -322,3 +324,4 @@ profileContainer.addEventListener("click", (event) => {
     // update new video
     getYoutubeVideo(songId, videoContainer);
 });
+
