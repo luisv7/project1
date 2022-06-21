@@ -252,17 +252,17 @@ function getArtistInfo(id){
 function getLyrics(artist, song){
 
     let URL = `https://api.lyrics.ovh/v1/${artist.toLowerCase()}/${song.toLowerCase()}`;
-    // target tags
-    const h2 = document.querySelector("#lyric-title");
-    const pre = document.querySelector("#lyrics");
-
-    // Loading Text
-    pre.textContent = "loading..."
-
 
     fetch(URL)
     .then(response => response.json())
     .then(data => {
+
+        // target tags
+        const h2 = document.querySelector("#lyric-title");
+        const pre = document.querySelector("#lyrics");
+
+        // Loading Text
+        pre.textContent = "loading...";
 
         // Song title
         h2.textContent = `${song.toUpperCase()} BY ${artist.toUpperCase()}`;
