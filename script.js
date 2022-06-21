@@ -1,172 +1,17 @@
 
 const main = document.querySelector("main");
 const textInputArtist = document.querySelector("#artist");
-// const textInputSong = document.querySelector("#song");
 const form = document.querySelector("form");
 const profileContainer = document.querySelector(".container-profile");
 const songContainer = document.querySelector(".container-list-of-songs");
 
-
-function clearAllData(){
-    // if data excists clear the data.
-    while (profileContainer.firstChild){
-        profileContainer.removeChild(profileContainer.firstChild);
-    }
-    while(songContainer.firstChild){
-        songContainer.removeChild(songContainer.firstChild);
-    }
-}
-
-function clearLyricsData(container){
-    while(container.firstChild){
-        container.removeChild(songContainer.firstChild);
-    }
-}
-
-function loading(container){
-    const loading = document.createElement("p")
-    loading.setAttribute("id", "loading");
-    loading.textContent = "loading...";
-    container.appendChild(loading);
-}
-
-function errorData(artistName, songName){
-    const errorsongContainer = document.querySelector(".container-list-of-songs");
-    const errorLyricsTitle = document.createElement("h2");
-    const errorLyricsPreEl = document.createElement("pre");
-
-    let errorMsg = `Oh No! We couldn't find\r\n ${songName.toUpperCase()} by ${artistName.toUpperCase()}\r\nPlease check your spelling or try some popular results.`;
-    errorLyricsTitle.textContent = "LYRICS NOT FOUND";
-    errorLyricsPreEl.textContent = errorMsg;
-    errorsongContainer.appendChild(errorLyricsTitle);
-    errorsongContainer.appendChild(errorLyricsPreEl);
-}
-
-function getId(artistName){
-    const options2 = {
-        method: 'GET',
-        headers: {
-            'X-RapidAPI-Key': '5603513f1emsh43c3e7113066ec3p176351jsn568118181670',
-            'X-RapidAPI-Host': 'genius.p.rapidapi.com'
-        }
-    };
-
-    let response = fetch(`https://genius.p.rapidapi.com/search?q=${artistName}`, options2)
-    .then(response => response.json())
-    .then(data => {
-        return data.response.hits[0].result.primary_artist.id
-    })
-    .catch(err => console.error(err));
-
-    return response
-}
-
-function getArtistInfo(id){
-
-    let artistProfile = `https://genius.p.rapidapi.com/artists/${id}`;
-
-    const options = {
-        method: 'GET',
-        headers: {
-            'X-RapidAPI-Key': '5603513f1emsh43c3e7113066ec3p176351jsn568118181670',
-            'X-RapidAPI-Host': 'genius.p.rapidapi.com'
-        }
-    };
-    
-     return fetch(artistProfile, options)
-        .then(response => response.json())
-        .then(data => {
-
-            // Add nickname to artist profile
-            let otherName = data.response.artist.alternate_names[0];
-            const otherNameH3 = document.createElement("h3");
-            const profileNickname = document.querySelector(".artist-name");
-            otherNameH3.textContent = otherName;
-            if (otherName !== undefined){
-                profileNickname.appendChild(otherNameH3)
-            }
-
-            // Profile Artist Info
-            let artistInfo = data.response.artist.description.dom.children[0].children;
-            const infoPar = document.createElement("p");
-            infoPar.setAttribute("class","about-artist");
-            artistInfo.forEach((element) => {
-                if (typeof element === "string"){
-                    infoPar.textContent += element;
-                }else if(typeof element.children[0] === "object"){
-                    infoPar.textContent += element.children[0].children[0];
-
-                }else{
-                    infoPar.textContent += element.children[0];
-                }
-            });
-            profileContainer.appendChild(infoPar);
-        })
-        .catch(err => console.error(err));
-
-    
-}
-
-function getLyrics(artist, song){
-
-    let URL = `https://api.lyrics.ovh/v1/${artist.toLowerCase()}/${song.toLowerCase()}`;
-
-    // Loading Text
-    const lyrics = document.querySelector("#loading")
-    loading(document.querySelector("#lyrics"));
-
-
-    fetch(URL)
-    .then(response => response.json())
-    .then(data => {
-
-        // target tags
-        const h2 = document.querySelector("#lyric-title");
-        const pre = document.querySelector("#lyrics");
-
-        // Song title
-        h2.textContent = `${song.toUpperCase()} BY ${artist.toUpperCase()}`;
-        
-        // lyrics data
-        pre.textContent = data.lyrics;
-
-    })
-    .catch(err => console.error(err));
-}
-
-function getYoutubeVideo(songId, insertContainer){
-
-    const options = {
-        method: 'GET',
-        headers: {
-            'X-RapidAPI-Key': '5603513f1emsh43c3e7113066ec3p176351jsn568118181670',
-            'X-RapidAPI-Host': 'genius.p.rapidapi.com'
-        }
-    };
-    
-    fetch(`https://genius.p.rapidapi.com/songs/${songId}`, options)
-        .then(response => response.json())
-        .then(data => {
-            let media = data.response.song.media;
-
-            media = media.filter((element) => {
-                return element.provider === "youtube";
-            });
-
-            let youtubeLink = media[0].url;
-            let youtubeId = youtubeLink.slice(youtubeLink.search("=") + 1);
-
-            let frame = document.createElement("iframe");
-            frame.setAttribute("src", `https://www.youtube.com/embed/${youtubeId}`);
-            frame.setAttribute("id", "player");
-            
-            insertContainer.insertBefore(frame, document.querySelector("#lyrics-label"));
-        })
-        .catch(err => console.error(err));
-}
-
 form.addEventListener("submit", async (event) => {
     event.preventDefault();
+
+    // if error exist 
+    if (document.querySelector("#error") !== null){
+        document.querySelector("#error").remove();
+    }
 
     // clear data before displaying new artist
     clearAllData();
@@ -198,8 +43,7 @@ form.addEventListener("submit", async (event) => {
     .then(async (data) => {
 
         // remove loading
-        const loading = document.querySelector("#loading")
-        loading.remove();
+        document.querySelector("#loading").remove();
 
         const artistArrHits = data.response.hits;
         
@@ -311,6 +155,7 @@ form.addEventListener("submit", async (event) => {
     })
     .catch((error) => {
         console.log(error)
+        errorData(artistName);
     })
 
 });
@@ -323,15 +168,161 @@ profileContainer.addEventListener("click", (event) => {
     let songId = event.target.dataset.songId;
 
     let videoContainer = document.querySelector(".lyrics-container");
-    let player = document.querySelector("#player");
 
     // update new lyrics
     getLyrics(artist, song);
 
     // remove current video player
-    player.remove();
+    document.querySelector("#player").remove();
 
     // update new video
     getYoutubeVideo(songId, videoContainer);
 });
+
+function loading(container){
+    const loading = document.createElement("p")
+    loading.setAttribute("id", "loading");
+    loading.textContent = "loading...";
+    container.appendChild(loading);
+}
+function getId(artistName){
+    const options2 = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': '5603513f1emsh43c3e7113066ec3p176351jsn568118181670',
+            'X-RapidAPI-Host': 'genius.p.rapidapi.com'
+        }
+    };
+
+    let response = fetch(`https://genius.p.rapidapi.com/search?q=${artistName}`, options2)
+    .then(response => response.json())
+    .then(data => {
+        return data.response.hits[0].result.primary_artist.id
+    })
+    .catch(err => console.error(err));
+
+    return response
+}
+function getArtistInfo(id){
+
+    let artistProfile = `https://genius.p.rapidapi.com/artists/${id}`;
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': '5603513f1emsh43c3e7113066ec3p176351jsn568118181670',
+            'X-RapidAPI-Host': 'genius.p.rapidapi.com'
+        }
+    };
+    
+     return fetch(artistProfile, options)
+        .then(response => response.json())
+        .then(data => {
+
+            // Add nickname to artist profile
+            let otherName = data.response.artist.alternate_names[0];
+            const otherNameH3 = document.createElement("h3");
+            const profileNickname = document.querySelector(".artist-name");
+            otherNameH3.textContent = otherName;
+            if (otherName !== undefined){
+                profileNickname.appendChild(otherNameH3)
+            }
+
+            // Profile Artist Info
+            let artistInfo = data.response.artist.description.dom.children[0].children;
+            const infoPar = document.createElement("p");
+            infoPar.setAttribute("class","about-artist");
+            artistInfo.forEach((element) => {
+                if (typeof element === "string"){
+                    infoPar.textContent += element;
+                }else if(typeof element.children[0] === "object"){
+                    infoPar.textContent += element.children[0].children[0];
+
+                }else{
+                    infoPar.textContent += element.children[0];
+                }
+            });
+            profileContainer.appendChild(infoPar);
+        })
+        .catch(err => console.error(err));
+
+    
+}
+function getLyrics(artist, song){
+
+    let URL = `https://api.lyrics.ovh/v1/${artist.toLowerCase()}/${song.toLowerCase()}`;
+    // target tags
+    const h2 = document.querySelector("#lyric-title");
+    const pre = document.querySelector("#lyrics");
+
+    // Loading Text
+    pre.textContent = "loading..."
+
+
+    fetch(URL)
+    .then(response => response.json())
+    .then(data => {
+
+        // Song title
+        h2.textContent = `${song.toUpperCase()} BY ${artist.toUpperCase()}`;
+        
+        // lyrics data
+        pre.textContent = data.lyrics;
+
+    })
+    .catch(err => console.error(err));
+}
+function getYoutubeVideo(songId, insertContainer){
+
+    const options = {
+        method: 'GET',
+        headers: {
+            'X-RapidAPI-Key': '5603513f1emsh43c3e7113066ec3p176351jsn568118181670',
+            'X-RapidAPI-Host': 'genius.p.rapidapi.com'
+        }
+    };
+    
+    fetch(`https://genius.p.rapidapi.com/songs/${songId}`, options)
+        .then(response => response.json())
+        .then(data => {
+            let media = data.response.song.media;
+
+            media = media.filter((element) => {
+                return element.provider === "youtube";
+            });
+
+            let youtubeLink = media[0].url;
+            let youtubeId = youtubeLink.slice(youtubeLink.search("=") + 1);
+
+            let frame = document.createElement("iframe");
+            frame.setAttribute("src", `https://www.youtube.com/embed/${youtubeId}`);
+            frame.setAttribute("id", "player");
+            
+            insertContainer.insertBefore(frame, document.querySelector("#lyrics-label"));
+        })
+        .catch(err => console.error(err));
+}
+function clearAllData(){
+
+    // if data excists clear the data.
+    while (profileContainer.firstChild){
+        profileContainer.removeChild(profileContainer.firstChild);
+    }
+    while(songContainer.firstChild){
+        songContainer.removeChild(songContainer.firstChild);
+    }
+}
+function clearLyricsData(container){
+    while(container.firstChild){
+        container.removeChild(songContainer.firstChild);
+    }
+}
+function errorData(artistName){
+    const h2 = document.createElement("h2");
+    h2.setAttribute("class", "column is-12");
+    h2.setAttribute("id", "error");
+    let errorMsg = `Oh No! We couldn't find\r\n the artist "${artistName.toUpperCase()}".\r\nPlease check your spelling or try again.`;
+    h2.textContent = errorMsg;
+    main.appendChild(h2);
+}
 
