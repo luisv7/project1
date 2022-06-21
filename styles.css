@@ -200,7 +200,11 @@ pre{
     background-color: lightgray;
     font-size: 1.3em;
 } 
-
+#loading{
+    font-size: 2.4em;
+    font-weight: 600;
+    margin: 0 auto;
+}
 #error{
     display: flex;
     justify-content: center;

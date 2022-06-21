@@ -17,7 +17,7 @@ form.addEventListener("submit", async (event) => {
     clearAllData();
 
     // loading
-    loading(profileContainer);
+    loading(main);
 
     // Grab input name of artist from form
     let artistName = event.target[0].value.toLowerCase();
@@ -180,7 +180,7 @@ profileContainer.addEventListener("click", (event) => {
 });
 
 function loading(container){
-    const loading = document.createElement("p")
+    const loading = document.createElement("p");
     loading.setAttribute("id", "loading");
     loading.textContent = "loading...";
     container.appendChild(loading);
