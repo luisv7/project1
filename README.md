@@ -1,15 +1,15 @@
 # Lyrics Finder
 
-- Description: A simple browser app where you can search for the lyrics of a song.
+- Description: A simple browser app where you can search for an artist and it will display popular song results along with the lyrics.
 
 # User Stories
-As a user, I would like to search the name of a singer/artist and song title in return, I would see the lyrics.
+As a user, I would like to search the name of an artist and in return, I would see popular song results along with the lyrics.
 
 # Technologies Used
 - HTML5
 - CSS3
 - Javascript
-- Bootstrap
+- Bulma CSS framework
 
 # Screenshots
 ![wireframe](wireframe.png)
@@ -19,8 +19,8 @@ As a user, I would like to search the name of a singer/artist and song title in 
 Click [here](https://iridescent-longma-c0b7c8.netlify.app) to search for some lyrics of your favorite artists.
 
 # Future Enhancements
-- add loading text while it's fetching the data.
-- As a user, I should see some information about the song and artist.
-- As a user, I should see more songs about the same singer/artist that was searched.
-- click on a new suggeste song and replace the lyrics if available.
+- As a user, I should see some information about the artist.
+- Click on a new suggeste song and replace the lyrics if available.
 - Display a video of the song.
+- Add loading text while it's fetching the data.
+- Display error
