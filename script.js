@@ -182,6 +182,7 @@ profileContainer.addEventListener("click", (event) => {
 function loading(container){
     const loading = document.createElement("p");
     loading.setAttribute("id", "loading");
+    loading.setAttribute("class", "column is-12-mobile is-12");
     loading.textContent = "loading...";
     container.appendChild(loading);
 }
@@ -319,7 +320,7 @@ function clearLyricsData(container){
 }
 function errorData(artistName){
     const h2 = document.createElement("h2");
-    h2.setAttribute("class", "column is-12");
+    h2.setAttribute("class", "column is-12-mobile is-12");
     h2.setAttribute("id", "error");
     let errorMsg = `Oh No! We couldn't find\r\n the artist "${artistName.toUpperCase()}".\r\nPlease check your spelling or try again.`;
     h2.textContent = errorMsg;
