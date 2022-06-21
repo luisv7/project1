@@ -23,9 +23,11 @@ function clearLyricsData(container){
     }
 }
 
-function loadingLyrics(){
-    const pre = document.querySelector("#lyrics");
-    pre.textContent = "loading...";
+function loading(container){
+    const loading = document.createElement("p")
+    loading.setAttribute("id", "loading");
+    loading.textContent = "loading...";
+    container.appendChild(loading);
 }
 
 function errorData(artistName, songName){
@@ -110,7 +112,9 @@ function getLyrics(artist, song){
     let URL = `https://api.lyrics.ovh/v1/${artist.toLowerCase()}/${song.toLowerCase()}`;
 
     // Loading Text
-    loadingLyrics();
+    const lyrics = document.querySelector("#loading")
+    loading(document.querySelector("#lyrics"));
+
 
     fetch(URL)
     .then(response => response.json())
@@ -167,6 +171,9 @@ form.addEventListener("submit", async (event) => {
     // clear data before displaying new artist
     clearAllData();
 
+    // loading
+    loading(profileContainer);
+
     // Grab input name of artist from form
     let artistName = event.target[0].value.toLowerCase();
     artistName = artistName.trim();
@@ -189,6 +196,10 @@ form.addEventListener("submit", async (event) => {
     fetch(URL, options)
     .then((response) => response.json())
     .then(async (data) => {
+
+        // remove loading
+        const loading = document.querySelector("#loading")
+        loading.remove();
 
         const artistArrHits = data.response.hits;
         
@@ -269,7 +280,6 @@ form.addEventListener("submit", async (event) => {
         });
 
         // Lyrics
-
         // Create 
         const lyricsDiv = document.createElement("div");
         const lyricsTitle = document.createElement("h2");
