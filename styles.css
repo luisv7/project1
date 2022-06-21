@@ -72,12 +72,12 @@ main{
 }
 main > .column{
     display: flex;
-    justify-content: flex-start;
     flex-direction: column;
     align-items: center;
     gap: 10px;
     padding: 5px;
     height: auto;
+    width: 100%;
 }
 
 /*  Main | Section 1 container-profile  */
@@ -104,11 +104,6 @@ main > .column{
 .profile > * {
     padding: 5px;
 }
-#player{
-    height: 360px;
-    width: 640px;
-    margin: 10px;
-}
 
 /* Main | Section 1 container-profile | song-list*/
 
@@ -126,18 +121,19 @@ main > .column{
     display: flex;
     justify-content: space-evenly;
     align-items: center;
-    gap: 5px;
     width: 100%;
+    min-width: 270px;
+    max-width: 400px;
     height: 90px;
     list-style-type: none;
-    padding: 5px;
+    padding: 7px;
     border-radius: 5px;
     box-shadow: 2px 2px 2px 1px rgba(0, 0, 0, 0.2);
     background-color: white;
 }
 .song-list ul img{
-    width: 80px;
-    height: 80px;
+    width: 70px;
+    height: 70px;
     object-fit: cover;
     border-radius: 3%;
 }
@@ -145,7 +141,7 @@ main > .column{
     display: flex;
     flex-direction: column;
     gap: 5px;
-    width: 150px;
+    width: 130px;
     line-height: 1.5em;
     padding-left: 5px; 
 }
@@ -163,8 +159,19 @@ main > .column{
 /* Main | Section 2 container-lyrics */
 
 .lyrics-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
     width: 100%;
-    text-align: center;
+}
+
+#player{
+    aspect-ratio: auto 16 / 9;
+    width: 100%;
+    min-width: 340px;
+    max-width: 640px;
+    padding: 5px;
 }
 
 pre{
@@ -173,6 +180,7 @@ pre{
     width: 100%;
     border-radius: 5px;
     height: 700px;
+    white-space: pre-wrap;
 }
 
 /* Footer */
@@ -187,27 +195,21 @@ pre{
     background-color: lightgray;
     font-size: 1.3em;
 } 
-@media screen and (max-width: 1024px) {
+
+@media screen and (max-width: 769px){
     .song-list > ul{
-        width: 280px;
-        height: 90px;
+        height: 65px;
+
     }
-
-  }
-
-@media screen and (max-width: 768px) {
-    #player{
-        object-fit: contain;
-        height: 260px;
-        width: 100%;
-        max-width: 540px;
-        margin: 10px;
+    .song-list ul img{
+        width: 50px;
+        height: 50px;
     }
-
-    .song-list > ul{
-        width: 340px;
-        height: 90px;
-    }
-
+ 
 }
+
+
+
+    
+
 

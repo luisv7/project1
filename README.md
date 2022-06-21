@@ -16,7 +16,7 @@ As a user, I would like to search the name of a singer/artist and song title in 
 
 # Getting Started
 
-Click [here](#) to search for some lyrics of your favorite artists.
+Click [here](https://iridescent-longma-c0b7c8.netlify.app) to search for some lyrics of your favorite artists.
 
 # Future Enhancements
 - add loading text while it's fetching the data.
