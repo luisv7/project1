@@ -152,6 +152,7 @@ form.addEventListener("submit", async (event) => {
         // fetch youtube video
         getYoutubeVideo(filteredArrHits[0].result.id, lyricsDiv);
 
+        textInputArtist.value = "";
     })
     .catch((error) => {
         console.log(error)
